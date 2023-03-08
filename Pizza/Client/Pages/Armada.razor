@@ -1,0 +1,49 @@
+﻿@using Pizza.Shared.Models;
+<h3>Armada</h3>
+
+<h4>Precio base</h4>
+<h5>@PrecioTamano</h5>
+
+<h4>Precio ingredientes</h4>
+<h5></h5>
+
+<h4>Precio final</h4>
+<h5>@totalFinal</h5>
+
+<div class="card" style="width: 18rem;">
+    <img src="https://emarsys.com/app/uploads/2022/05/PizzaHut-header-2280x900px.jpg" class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">@PrecioTamano</h5>
+        <p class="card-text">
+            @totalIngredientes
+            @if (ingredientes.Count > 0)
+            {
+                @foreach (var ingrediente in ingredientes)
+                {
+                    <h4>@ingrediente.Nombre</h4>
+                }
+            }
+            </p>
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter] public float PrecioTamano { get; set; }
+    [Parameter] public List<Ingrediente> ingredientes { get; set; }
+
+    float totalIngredientes = 0.0f;
+    float totalFinal = 0.0f;
+
+    protected override Task OnParametersSetAsync()
+    {
+        totalIngredientes = 0.0f;
+        foreach(var ingrediente in ingredientes)
+        {
+            totalIngredientes += ingrediente.Precio;
+        }
+        totalFinal = totalIngredientes + PrecioTamano;
+        return base.OnParametersSetAsync();
+    }
+}

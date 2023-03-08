@@ -1,0 +1,83 @@
+﻿@page "/armar"
+@using Pizza.Shared.Models;
+<h3>Armar</h3>
+
+<div class="row">
+    <div class="col-8">
+        @if( ingredientes.Count > 0 && tamanos.Count > 0)
+        {
+            <select class="form-select" @bind="precioTamano">
+                @foreach (var tamano in tamanos)
+                {
+                    <option value="@tamano.Precio">@tamano.Nombre</option>
+                }
+           </select>
+            @if(precioTamano > 0.0)
+            {
+                @foreach(var ingrediente in ingredientes)
+                {
+
+                    <div class="form-check">
+                        <input type="checkbox" value="@ingrediente.Id" @onchange="eventArgs => {IngredientesSeleccionados(eventArgs.Value, ingrediente.Nombre, ingrediente.Id);}" />
+                        <label class="form-check-label" for="flexCheckDefault">
+                            @ingrediente.Nombre 
+                            <br/>
+                            $ @ingrediente.Precio
+                       </label>
+                    </div>       
+                    <br/>
+                }
+            }
+        }
+        else
+        {
+            <div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Loading_2.gif?20170503175831">
+            </div>
+        }
+    </div>
+    <div class="col-4">
+        <Armada PrecioTamano="precioTamano" ingredientes="ingredientesSeleccionados"></Armada>
+    </div>
+</div>
+
+@code {
+    List<Ingrediente> ingredientes = new List<Ingrediente>();
+    List<Tamano> tamanos = new List<Tamano>();
+    List<Ingrediente> ingredientesSeleccionados = new List<Ingrediente>();
+    float precioTamano = 0.0f;
+
+    protected override Task OnInitializedAsync()
+    {
+        ingredientes = new List<Ingrediente>
+        {
+            new Ingrediente{Id = 1, Nombre = "Jamón", Precio = 10.0f},
+            new Ingrediente{Id = 2, Nombre = "Piña", Precio = 5.0f},
+            new Ingrediente{Id = 3, Nombre = "Salami", Precio = 8.0f},
+            new Ingrediente{Id = 4, Nombre = "Queso", Precio = 15.0f},
+            new Ingrediente{Id = 5, Nombre = "Atún", Precio = 20.0f},
+            new Ingrediente{Id = 6, Nombre = "Anchoas", Precio = 30.0f}
+        };
+
+        tamanos = new List<Tamano>
+        {
+            new Tamano{Id = 1, Nombre= "Chica", Precio = 100.0f},
+            new Tamano{Id = 2, Nombre= "Mediana", Precio = 150.0f},
+            new Tamano{Id = 3, Nombre= "Grande", Precio = 200.0f}
+        };
+        return base.OnInitializedAsync();
+    }
+
+    void IngredientesSeleccionados(object checkedValue, string nombre, int id )
+    {
+        var activo = checkedValue.ToString();
+        if(activo == "True")
+        {
+            ingredientesSeleccionados.Add(ingredientes.Where(i => i.Id == id).FirstOrDefault());
+        }
+        else
+        {
+            ingredientesSeleccionados.Remove(ingredientes.Where(i => i.Id == id).FirstOrDefault());
+        }
+    }
+}
